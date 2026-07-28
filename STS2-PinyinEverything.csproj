@@ -1,0 +1,50 @@
+<Project Sdk="Godot.NET.Sdk/4.5.1">
+    <PropertyGroup>
+        <RootNamespace>STS2PinyinEverything</RootNamespace>
+        <TargetFramework>net9.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>true</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <EnableDynamicLoading>true</EnableDynamicLoading>
+        <NoWarn>CS0436</NoWarn>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <Sts2Dir>E:\SteamLibrary\steamapps\common\Slay the Spire 2</Sts2Dir>
+        <Sts2DataDir>$(Sts2Dir)\data_sts2_windows_x86_64</Sts2DataDir>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Krafs.Publicizer" Version="2.3.0" PrivateAssets="all"/>
+        <PackageReference Include="STS2.RitsuLib" Version="0.4.38"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Publicize Include="sts2" IncludeCompilerGeneratedMembers="false" IncludeVirtualMembers="false"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="sts2" HintPath="$(Sts2DataDir)\sts2.dll" Private="False"/>
+        <Reference Include="0Harmony" HintPath="$(Sts2DataDir)\0Harmony.dll" Private="False"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="LICENSE"/>
+        <Content Include="mod_manifest.json"/>
+        <Content Include="THIRD-PARTY-NOTICES.md"/>
+        <EmbeddedResource Include="Resources\PinyinLexicon.tsv.br"
+                          LogicalName="STS2PinyinEverything.Resources.PinyinLexicon.tsv.br"/>
+    </ItemGroup>
+
+    <Target Name="Copy Mod" AfterTargets="PostBuildEvent">
+        <PropertyGroup>
+            <ModInstallDir>$(Sts2Dir)\mods\$(MSBuildProjectName)\</ModInstallDir>
+        </PropertyGroup>
+        <Message Text="Copying mod to Slay the Spire 2 mods folder..." Importance="high"/>
+        <MakeDir Directories="$(ModInstallDir)"/>
+        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModInstallDir)"/>
+        <Copy SourceFiles="$(MSBuildProjectDirectory)\LICENSE" DestinationFolder="$(ModInstallDir)"/>
+        <Copy SourceFiles="$(MSBuildProjectDirectory)\mod_manifest.json" DestinationFolder="$(ModInstallDir)"/>
+        <Copy SourceFiles="$(MSBuildProjectDirectory)\THIRD-PARTY-NOTICES.md" DestinationFolder="$(ModInstallDir)"/>
+    </Target>
+</Project>
