@@ -1,5 +1,6 @@
 using MegaCrit.Sts2.Core.Localization;
 using STS2PinyinEverything.Data;
+using STS2PinyinEverything.Utils;
 using STS2RitsuLib;
 using STS2RitsuLib.Settings;
 
@@ -24,7 +25,10 @@ namespace STS2PinyinEverything.Settings
                         Const.ModId,
                         ModDataStore.SettingsKey,
                         settings => settings.Enabled,
-                        (settings, value) => settings.Enabled = value),
+                        (settings, value) => DisplayTextRefreshService.SetValue(
+                            settings.Enabled,
+                            value,
+                            newValue => settings.Enabled = newValue)),
                     () => true);
 
                 var showTonesBinding = ModSettingsBindings.WithDefault(
@@ -32,7 +36,10 @@ namespace STS2PinyinEverything.Settings
                         Const.ModId,
                         ModDataStore.SettingsKey,
                         settings => settings.ShowTones,
-                        (settings, value) => settings.ShowTones = value),
+                        (settings, value) => DisplayTextRefreshService.SetValue(
+                            settings.ShowTones,
+                            value,
+                            newValue => settings.ShowTones = newValue)),
                     () => true);
 
                 var autoSpacingBinding = ModSettingsBindings.WithDefault(
@@ -40,7 +47,10 @@ namespace STS2PinyinEverything.Settings
                         Const.ModId,
                         ModDataStore.SettingsKey,
                         settings => settings.AutoSpacing,
-                        (settings, value) => settings.AutoSpacing = value),
+                        (settings, value) => DisplayTextRefreshService.SetValue(
+                            settings.AutoSpacing,
+                            value,
+                            newValue => settings.AutoSpacing = newValue)),
                     () => true);
 
                 var toneNotationBinding = ModSettingsBindings.WithDefault(
@@ -48,15 +58,18 @@ namespace STS2PinyinEverything.Settings
                         Const.ModId,
                         ModDataStore.SettingsKey,
                         settings => settings.ToneNotation,
-                        (settings, value) => settings.ToneNotation = value),
+                        (settings, value) => DisplayTextRefreshService.SetValue(
+                            settings.ToneNotation,
+                            value,
+                            newValue => settings.ToneNotation = newValue)),
                     () => PinyinToneNotation.ToneMarks);
 
                 RitsuLibFramework.RegisterModSettings(Const.ModId, page => page
                     .WithModDisplayName(T("Pinyin Everything", "全都拼音"))
                     .WithTitle(T("Settings", "设置"))
                     .WithDescription(T(
-                        "Adjust automatic pinyin conversion. Already-created text may require reopening the screen before changes appear.",
-                        "调整自动拼音转换。已经创建的文本可能需要重新打开界面后才会显示更改。"))
+                        "Adjust automatic pinyin conversion. Setting changes refresh displayed text immediately.",
+                        "调整自动拼音转换。设置变化会立即刷新已显示的文本。"))
                     .AddSection("general", section => section
                         .WithTitle(T("General", "通用"))
                         .AddToggle(
@@ -64,8 +77,8 @@ namespace STS2PinyinEverything.Settings
                             T("Enable pinyin conversion", "启用拼音转换"),
                             enabledBinding,
                             T(
-                                "When disabled, newly displayed text remains unchanged.",
-                                "关闭后，新显示的文本将保持原样。"))
+                                "When disabled, displayed text remains unchanged.",
+                                "关闭后，显示的文本将保持原样。"))
                         .AddToggle(
                             "auto_spacing",
                             T("Add spaces automatically", "自动添加空格"),

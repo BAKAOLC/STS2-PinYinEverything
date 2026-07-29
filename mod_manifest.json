@@ -4,7 +4,7 @@
   "name": "Pinyin Everything",
   "author": "OLC",
   "description": "Automatically converts displayed Chinese text to configurable pinyin with phrase-aware polyphonic readings.",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "has_pck": false,
   "has_dll": true,
   "affects_gameplay": false,
