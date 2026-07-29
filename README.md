@@ -36,7 +36,7 @@ This is a DLL-only mod. The build copies the following files into the configured
 - `mod_manifest.json`
 - `THIRD-PARTY-NOTICES.md`
 
-The mod has no runtime pinyin package or companion assembly. Its compressed lexicon is embedded in the main DLL. To regenerate the lexicon from the pinned upstream datasets:
+The mod has no runtime pinyin package or companion assembly. Its compressed lexicon is embedded in the main DLL. Game-specific readings in `Resources/PinyinOverrides.tsv` are applied after the pinned upstream datasets. To regenerate the lexicon:
 
 ```powershell
 .\scripts\Generate-PinyinLexicon.ps1

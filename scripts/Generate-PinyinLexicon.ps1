@@ -1,5 +1,6 @@
 param(
-    [string]$OutputPath = (Join-Path $PSScriptRoot '..\Resources\PinyinLexicon.tsv.br')
+    [string]$OutputPath = (Join-Path $PSScriptRoot '..\Resources\PinyinLexicon.tsv.br'),
+    [string]$OverridePath = (Join-Path $PSScriptRoot '..\Resources\PinyinOverrides.tsv')
 )
 
 $ErrorActionPreference = 'Stop'
@@ -16,6 +17,7 @@ $tempRoot = Join-Path ([IO.Path]::GetTempPath()) ('sts2-pinyin-lexicon-' + [guid
 $characterPath = Join-Path $tempRoot 'characters.txt'
 $phrasePath = Join-Path $tempRoot 'phrases.txt'
 $resolvedOutputPath = [IO.Path]::GetFullPath($OutputPath)
+$resolvedOverridePath = [IO.Path]::GetFullPath($OverridePath)
 
 function Remove-ToneMarks {
     param([Parameter(Mandatory)][string]$Value)
@@ -134,6 +136,36 @@ try {
         )
     }
 
+    $phraseOverrideCount = 0
+    foreach ($line in [IO.File]::ReadLines($resolvedOverridePath)) {
+        $trimmedLine = $line.Trim()
+        if ($trimmedLine.Length -eq 0 -or $trimmedLine.StartsWith('#')) {
+            continue
+        }
+
+        $columns = $line -split "`t", 2
+        if ($columns.Length -ne 2 -or
+            [string]::IsNullOrWhiteSpace($columns[0]) -or
+            [string]::IsNullOrWhiteSpace($columns[1])) {
+            throw "Invalid pinyin override line: $line"
+        }
+
+        $phrase = $columns[0].Trim()
+        $toneMarkTokens = $columns[1].Trim() -split '\s+'
+        $plainTokens = foreach ($token in $toneMarkTokens) {
+            Remove-ToneMarks -Value $token
+        }
+        $toneNumberTokens = foreach ($token in $toneMarkTokens) {
+            Convert-ToNumberedTone -Value $token
+        }
+        $phrases[$phrase] = @(
+            ($plainTokens -join ' '),
+            ($toneMarkTokens -join ' '),
+            ($toneNumberTokens -join ' ')
+        )
+        $phraseOverrideCount++
+    }
+
     $outputDirectory = Split-Path -Parent $resolvedOutputPath
     [void](New-Item -ItemType Directory -Force -Path $outputDirectory)
 
@@ -178,6 +210,7 @@ try {
     Write-Output "Generated $resolvedOutputPath"
     Write-Output "Character readings: $($characters.Count)"
     Write-Output "Phrase readings: $($phrases.Count)"
+    Write-Output "Phrase overrides: $phraseOverrideCount"
 }
 finally {
     $resolvedTempRoot = [IO.Path]::GetFullPath($tempRoot)
