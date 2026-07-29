@@ -35,6 +35,14 @@ namespace STS2PinyinEverything.Settings
                         (settings, value) => settings.ShowTones = value),
                     () => true);
 
+                var autoSpacingBinding = ModSettingsBindings.WithDefault(
+                    ModSettingsBindings.Global<PinyinSettings, bool>(
+                        Const.ModId,
+                        ModDataStore.SettingsKey,
+                        settings => settings.AutoSpacing,
+                        (settings, value) => settings.AutoSpacing = value),
+                    () => true);
+
                 var toneNotationBinding = ModSettingsBindings.WithDefault(
                     ModSettingsBindings.Global<PinyinSettings, PinyinToneNotation>(
                         Const.ModId,
@@ -57,7 +65,14 @@ namespace STS2PinyinEverything.Settings
                             enabledBinding,
                             T(
                                 "When disabled, newly displayed text remains unchanged.",
-                                "关闭后，新显示的文本将保持原样。")))
+                                "关闭后，新显示的文本将保持原样。"))
+                        .AddToggle(
+                            "auto_spacing",
+                            T("Add spaces automatically", "自动添加空格"),
+                            autoSpacingBinding,
+                            T(
+                                "Insert spaces between pinyin syllables and adjacent letters or numbers.",
+                                "在拼音音节之间，以及拼音与相邻字母或数字之间插入空格。")))
                     .AddSection("tones", section => section
                         .WithTitle(T("Tones", "声调"))
                         .AddToggle(

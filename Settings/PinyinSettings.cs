@@ -14,6 +14,8 @@ namespace STS2PinyinEverything.Settings
 
         [JsonPropertyName("show_tones")] public bool ShowTones { get; set; } = true;
 
+        [JsonPropertyName("auto_spacing")] public bool AutoSpacing { get; set; } = true;
+
         [JsonPropertyName("tone_notation")]
         public PinyinToneNotation ToneNotation { get; set; } = PinyinToneNotation.ToneMarks;
     }

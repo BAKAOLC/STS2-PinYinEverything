@@ -18,7 +18,7 @@ namespace STS2PinyinEverything.Utils
 
         private static readonly Lazy<LexiconData> Data = new(Load, LazyThreadSafetyMode.ExecutionAndPublication);
 
-        public static string Convert(string hanText, PinyinOutputStyle outputStyle)
+        public static string Convert(string hanText, PinyinOutputStyle outputStyle, bool autoSpacing)
         {
             var data = Data.Value;
             var builder = new StringBuilder(hanText.Length * 3);
@@ -51,12 +51,14 @@ namespace STS2PinyinEverything.Utils
 
             void AppendSyllables(string value)
             {
-                if (hasOutput)
+                if (autoSpacing && hasOutput)
                 {
                     builder.Append(' ');
                 }
 
-                builder.Append(value);
+                builder.Append(autoSpacing
+                    ? value
+                    : value.Replace(" ", string.Empty, StringComparison.Ordinal));
                 hasOutput = true;
             }
         }

@@ -11,7 +11,7 @@ namespace STS2PinyinEverything.Utils
 
         public static void WarmUp()
         {
-            _ = PinyinLexicon.Convert("中文", PinyinOutputStyle.Plain);
+            _ = PinyinLexicon.Convert("中文", PinyinOutputStyle.Plain, true);
         }
 
         public static string Transform(string text)
@@ -24,6 +24,7 @@ namespace STS2PinyinEverything.Utils
             }
 
             var outputStyle = PinyinSettingsService.OutputStyle;
+            var autoSpacing = PinyinSettingsService.AutoSpacing;
             StringBuilder? builder = null;
             var copyStart = 0;
 
@@ -49,19 +50,19 @@ namespace STS2PinyinEverything.Utils
                 }
 
                 var run = text[runStart..index];
-                var converted = ConvertHanRun(run, outputStyle);
+                var converted = ConvertHanRun(run, outputStyle, autoSpacing);
 
                 builder ??= new StringBuilder(text.Length + converted.Length);
                 builder.Append(text, copyStart, runStart - copyStart);
 
-                if (NeedsLeadingSpace(text, runStart))
+                if (autoSpacing && NeedsLeadingSpace(text, runStart))
                 {
                     builder.Append(' ');
                 }
 
                 builder.Append(converted);
 
-                if (NeedsTrailingSpace(text, index))
+                if (autoSpacing && NeedsTrailingSpace(text, index))
                 {
                     builder.Append(' ');
                 }
@@ -83,11 +84,11 @@ namespace STS2PinyinEverything.Utils
             return LocManager.Instance is { Language: "zhs" or "zht" };
         }
 
-        private static string ConvertHanRun(string run, PinyinOutputStyle outputStyle)
+        private static string ConvertHanRun(string run, PinyinOutputStyle outputStyle, bool autoSpacing)
         {
             return RunCache.GetOrAdd(
-                new CacheKey(run, outputStyle),
-                static key => PinyinLexicon.Convert(key.Text, key.OutputStyle));
+                new CacheKey(run, outputStyle, autoSpacing),
+                static key => PinyinLexicon.Convert(key.Text, key.OutputStyle, key.AutoSpacing));
         }
 
         private static bool NeedsLeadingSpace(string text, int runStart)
@@ -223,6 +224,9 @@ namespace STS2PinyinEverything.Utils
             return true;
         }
 
-        private readonly record struct CacheKey(string Text, PinyinOutputStyle OutputStyle);
+        private readonly record struct CacheKey(
+            string Text,
+            PinyinOutputStyle OutputStyle,
+            bool AutoSpacing);
     }
 }

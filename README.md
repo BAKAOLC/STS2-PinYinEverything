@@ -10,11 +10,11 @@ A RitsuLib-based Slay the Spire 2 mod that automatically replaces displayed Chin
 - LineEdit and TextEdit placeholder text without modifying user input.
 - Strings drawn directly through CanvasItem.DrawString.
 - Scene-authored MegaText content after the control becomes ready.
-- A RitsuLib settings page with an enable switch and configurable tone notation.
+- A RitsuLib settings page with an enable switch, automatic spacing, and configurable tone notation.
 
 The conversion runs only while Simplified Chinese (`zhs`) or Traditional Chinese (`zht`) is selected. It preserves BBCode tags and inline image bodies. The embedded lexicon uses longest-phrase matching for common polyphonic words, then falls back to a default per-character reading.
 
-Tone display defaults to tone marks such as `xiǎo`. It can be disabled or changed to tone numbers such as `xiao3`. Settings changes affect newly displayed text immediately; already-created controls may need the current screen to be reopened.
+Tone display defaults to tone marks such as `xiǎo`. It can be disabled or changed to tone numbers such as `xiao3`. Automatic spacing is enabled by default and can be disabled to join converted pinyin syllables without removing whitespace that already existed in the source text. Settings changes affect newly displayed text immediately; already-created controls may need the current screen to be reopened.
 
 When Exclaim Everything is also installed, shared display patches explicitly run Pinyin Everything first so the converted text can be transformed again by Exclaim Everything.
 

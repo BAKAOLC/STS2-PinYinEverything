@@ -9,6 +9,8 @@ namespace STS2PinyinEverything.Settings
 
         public static bool ShowTones => Read(static settings => settings.ShowTones, true);
 
+        public static bool AutoSpacing => Read(static settings => settings.AutoSpacing, true);
+
         public static PinyinToneNotation ToneNotation =>
             Read(static settings => settings.ToneNotation, PinyinToneNotation.ToneMarks);
 
